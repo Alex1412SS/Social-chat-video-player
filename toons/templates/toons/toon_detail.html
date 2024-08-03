@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    var chatSocket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/reviews/'
+        );
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    $(document).ready(function() {
+
+            $('#send').click(function() {
+                var review = $('#review_input').val();
+                var toon = $('#send').val();
+                chatSocket.send(JSON.stringify({
+                    'review': review,
+                    'toon': toon
+                }));
+                $('#review_input').val('');
+            });
+
+            $('#review_input').keyup(function(e) {
+                if (e.keyCode === 13) {
+                    $('#send-btn').click();
+                }
+            });
+
+    });
+     $(document).ready(function() {
+
+            $('#send_review').click(function() {
+                var comment = $('#review_input2').val();
+                var review_id = $('#send_review').val();
+                chatSocket.send(JSON.stringify({
+                    'comment': comment,
+                    'review_id': review_id
+                }));
+                $('#review_input2').val('');
+            });
+
+            $('#review_input2').keyup(function(e) {
+                if (e.keyCode === 13) {
+                    $('#send_review-btn').click();
+                }
+            });
+
+    });
+
+</script>
+<body>
+{{toon}}
+
+<a href="{% url 'toons:like' toon.slug %}">32423</a>
+<a href="{% url 'toons:favorite' toon.slug %}">32423</a>
+<a href="{% url 'toons:review' toon.slug %}">review</a>
+<h3>{{  toon_ser.name }}</h3>
+<a href="{% url 'toons:toonseries_detail' toon_ser.id %}">222</a>
+<div>
+
+{% for review in toon.reviews.all %}
+    <div style="border: 1px solid black;">
+    <a href="{% url 'account:profile_guest' review.user.profile.slug %}">{{review.user.profile}}</a>
+    <p>{{ review.user.profile.nickname }}</p>
+    <p>{{ review.comment }}</p>
+    <a href="{% url 'toons:review_like' review.id %}">like</a>
+    {% if request.user == review.user %}
+    <a href="{% url 'toons:review_update' review.id %}">edit</a>
+    <a href="{% url 'toons:review_delete' review.id %}">delete</a>
+    {% endif %}
+    <p>Rating: {{ review.likes_count }}</p>
+        </div>
+    {%  for comment in review.otvet.all %}
+    <div style="border: 1px solid black; margin-left: 10px;">
+    <a href="{% url 'account:profile_guest' comment.user.profile.slug %}">{{comment.user.profile}}</a>
+    <p>{{ comment.user.profile.nickname }}</p>
+    <p>{{ comment.comment }}</p>
+        </div>
+    {% endfor %}
+    <input id="review_input2">
+    <button id="send_review" value="{{ review.id }}">send</button>
+
+{% endfor %}
+    <div>
+        <input id="review_input">
+        <button id="send" value="{{ toon.slug }}">send</button>
+    </div>
+        </div>
+</body>
+</html>

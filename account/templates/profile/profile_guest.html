@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{{profile}}
+<a href="{% url 'account:send_friend'  profile.slug %}">send friend reqyuest</a>
+<a href="{% url 'account:create_dialog' profile.user.id %}"> dialog </a>
+<a href="#">chat</a>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        var chatSocket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/chat/'
+        );
+
+        chatSocket.onopen = function(e) {
+            console.log('connected');
+        };
+
+        chatSocket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            $('#chat').append('<p><strong>' + data.username + ': </strong>' + data.message + '</p>');
+
+        };
+
+        chatSocket.onclose = function(e) {
+            console.log('disconnected');
+        };
+
+
+        $(document).ready(function() {
+
+            $('#send-btn').click(function() {
+                var message = $('#message-input').val();
+                chatSocket.send(JSON.stringify({
+                    'message': message
+                }));
+                $('#message-input').val('');
+            });
+
+            $('#message-input').keyup(function(e) {
+                if (e.keyCode === 13) {
+                    $('#send-btn').click();
+                }
+
+            });
+
+            $(document).on('click', '#delete-btn', function() {
+    var message = $(this).val();
+                chatSocket.send(JSON.stringify({
+                    'message_id': message
+
+                }));
+
+             $('#message-' + message).remove();
+             $(this).remove();
+
+
+            });
+
+
+
+        });
+
+
+
+
+
+    </script>
+</head>
+<body>
+<h1>Toons List</h1>
+<div>
+    {% for i in notifications %}
+    <p>{{ i.not_text }}</p>
+    {% endfor %}
+</div>
+
+
+<a href="{%  url 'account:profile' %}">Profile</a>
+<div style='overflow-y:auto; height: 200px'>
+     <div id="chat">
+         {%  for message in messages %}
+         <p id="message-{{ message.id }}"><strong><a href="{% url 'account:profile_guest' message.user.profile.slug %}">{{ message.user.username }}:</a></strong> {{ message.message }}</p>
+         <button id="delete-btn" value="{{ message.id }}">delete</button>
+         {% endfor %}
+     </div>
+    <input type="text" id="message-input" placeholder="Type your message here">
+    <button id="send-btn">Send</button>
+</div>
+<div>
+    {% for i in categorys %}
+        <a href="{{ i.get_absolute_url }}">{{ i.name }}</a>
+    {% endfor %}
+</div>
+    <form method="get">
+        <ul>
+            {% for genre in filter.form.genre %}
+            <li>
+
+                    {{ genre }}
+
+            </li>
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for author in filter.form.author %}
+            <li>
+
+                    {{ author }}
+
+            </li>
+            {% endfor %}
+        </ul>
+        <button type="submit" class="button">Применить фильтр</button>
+        <button type="submit" class="button" name="reset" value="1">Сбросить фильтр</button>
+    </form>
+
+    <ul>
+        {% for toon in toons %}
+        <a href="{{ toon.get_absolute_url }}">
+            <li>{{ toon.name }}</li>
+            </a>
+        {% empty %}
+            <li>Нет данных для отображения</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>

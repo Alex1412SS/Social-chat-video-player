@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script>
+    var chatSocket = new WebSocket(
+            'ws://' + window.location.host +
+            '/ws/chat2/'
+        );
+
+    chatSocket.onmessage = function (e) {
+        document.getElementById('messages').innerHTML += e.data + '<br>'+ '<br>';
+    };
+
+    chatSocket.onclose = function (e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+
+    $(document).ready(function() {
+
+            $('#send').click(function() {
+                var message = $('#message_input').val();
+                var chat = $('#send').val();
+                chatSocket.send(JSON.stringify({
+                    'message': message,
+                    'chat': chat
+                }));
+                $('#message_input').val('');
+            });
+
+            $('#message_input').keyup(function(e) {
+                if (e.keyCode === 13) {
+                    $('#send-btn').click();
+                }
+
+
+
+            });
+        }
+    );
+
+
+
+
+
+</script>
+<body>
+{% if chat %}
+        <div id="messages" class="panel">
+            <div id="innerMessages">
+                {% for message in chat.message_set.all %}
+                      <div class="list-group-item {% if not message.is_readed %}unreaded{% endif %}">
+    <a href="#"><img class="avatar-comment"></a>
+    <div class="reply-body">
+        <ul class="list-inline">
+            <li class="drop-left-padding">
+                <strong class="list-group-item-heading"><a href="#}">{{ message.author.username }}</a></strong>
+            </li>
+            <li class="pull-right text-muted"><small>{{ message.pub_date }}</small></li>
+        </ul>
+        <div>{{ message.message|safe }}</div>
+    </div>
+</div>
+
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+<input type="text" name="" id="message_input">
+<button value="{{ chat.id }}" id="send">send</button>
+
+</body>
+</html>

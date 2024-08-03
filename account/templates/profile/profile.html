@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+{{profile.nickname}}<br>
+{{profile.about}}<br>
+{{profile.birthday}}<br>
+{{profile.rating}}<br>
+{{profile.friends.all}}<br>
+<img style="width: 100px;" src="{{ profile.image.url }}" alt=""><br>
+{% for toon in profile.favorites.all %}
+{{toon}}<br>
+{% endfor %}
+{% for toon in profile.likes_for.all %}
+{{toon}}<br>
+{% endfor %}
+<a href="{% url 'account:profile_update'%}">update</a>
+<a href="{% url 'account:logout' %}">logout</a>
+<a href="{% url 'account:dialog' %}">dialog</a>
+<br>
+    <h1>Friend Requests</h1>
+    <ul>
+        {% for request in profile_friend_requests %}
+            <li>{{ request.from_user.profile.nickname }} wants to be your friend</li>
+            <form method="post" action="{% url 'account:accept_friend' request.from_user.profile.slug %}">
+                {% csrf_token %}
+                <button type="submit">Accept</button>
+            </form>
+        {% endfor %}
+    </ul>
+<a href="{% url 'account:indsex' %}">122222</a>
+</body>
+</html>

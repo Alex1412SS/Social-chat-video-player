@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{{ user_profile }}}
+{%  for message in chats %}
+{{message}}
+<a href="{% url 'account:messages' message.pk %}">link</a>
+{% endfor %}
+</body>
+</html>

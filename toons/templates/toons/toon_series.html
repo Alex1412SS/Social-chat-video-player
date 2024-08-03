@@ -1,0 +1,26 @@
+{%  load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://vjs.zencdn.net/7.10.2/video-js.css" rel="stylesheet" />
+</head>
+<body>
+<h3>{{  toon_ser.name }}</h3>
+<p>{{  toon_ser.description }}</p>
+<video
+              id="my-video"
+              class="video-js"
+              controls
+              preload="auto"
+              width="1000"
+              height="800"
+              data-setup="{}"
+          >
+            <source src="{% url 'toons:toonseries_detaisl' toon_ser.id %}" type="video/mp4"/>
+            <source src="{% url 'toons:toonseries_detaisl' toon_ser.id %}" type="video/webm"/>
+          </video>
+        </div>
+</body>
+</html>

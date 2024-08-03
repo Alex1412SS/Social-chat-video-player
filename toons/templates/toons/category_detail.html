@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+ <form method="get">
+        <ul>
+            {% for genre in filter.form.genre %}
+            <li>
+
+                    {{ genre }}
+
+            </li>
+            {% endfor %}
+        </ul>
+        <button type="submit" class="button">Применить фильтр</button>
+        <button type="submit" class="button" name="reset" value="1">Сбросить фильтр</button>
+    </form>
+
+    <ul>
+{% for toon in toons %}
+<h3>{{  toon.name }}</h3>
+<p>{{  toon.description }}</p>
+<img src="{{ toon.image.url }}" alt="">
+<a href="{{ toon.get_absolute_url }}">About</a>
+{% endfor %}
+
+</body>
+</html>
